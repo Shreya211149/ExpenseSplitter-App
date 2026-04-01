@@ -14,20 +14,20 @@ import java.util.Date;
 @Component
 public class JwtUtil {
 
-    @Value("${jwt.secret:}")
-    private String secret;
+    private static final String SECRET =
+            "thisIsAVeryLongSecretKeyForSplitKroAppThatIsAtLeast256BitsLong";
 
-    @Value("${jwt.expiration}")
-    private Long expiration;
+    private static final long EXPIRATION = 86400000;
+
 
     private SecretKey getSigningKey() {
-        return Keys.hmacShaKeyFor(secret.getBytes());
+        return Keys.hmacShaKeyFor(SECRET.getBytes());
     }
     public String generateToken(String email) {
         return Jwts.builder()
                 .setSubject(email)
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + expiration))
+                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION))
                 .signWith(getSigningKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
