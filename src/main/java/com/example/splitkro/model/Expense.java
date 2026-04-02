@@ -3,6 +3,7 @@ package com.example.splitkro.model;
 import com.example.splitkro.Enum.SplitType;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -26,13 +27,16 @@ public class Expense {
     @Column(nullable = false)
     private BigDecimal amount;
 
-    private LocalDateTime date = LocalDateTime.now();
+    @CreationTimestamp
+    @Column(nullable = false, updatable = false)
+    private LocalDateTime date;
 
-    @ManyToOne
+
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "payer_id", nullable = false)
     private User payer;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "group_id", nullable = false)
     private Group group;
 

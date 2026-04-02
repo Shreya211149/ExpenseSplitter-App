@@ -12,6 +12,7 @@ import com.example.splitkro.transformer.GroupTransformer;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -32,12 +33,14 @@ public class GroupService {
         Group saved = groupRepository.save(group);
         return GroupTransformer.groupToGroupResponse(saved);
     }
+    @Transactional(readOnly = true)
     public GroupResponse getGroupById(Long id) {
         Group group = groupRepository.findById(id)
                 .orElseThrow(() -> new GroupNotFoundException("Group doesn't exist"));
         return GroupTransformer.groupToGroupResponse(group);
     }
 
+    @Transactional(readOnly = true)
     public List<GroupResponse> getGroupsByUser(Long userId) {
         return groupRepository.findByMembersId(userId)
                 .stream()

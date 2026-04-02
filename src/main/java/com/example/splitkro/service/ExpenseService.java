@@ -14,10 +14,11 @@ import com.example.splitkro.repository.ExpenseShareRepository;
 import com.example.splitkro.repository.GroupRepository;
 import com.example.splitkro.repository.UserRepository;
 import com.example.splitkro.transformer.ExpenseTransformer;
-import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -28,16 +29,13 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class ExpenseService {
 
-    @Autowired
-    private  ExpenseRepository expenseRepository;
-    @Autowired
-    private ExpenseShareRepository expenseShareRepository;
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private GroupRepository groupRepository;
+    private final ExpenseRepository expenseRepository;      // ← add final
+    private final ExpenseShareRepository expenseShareRepository; // ← add final
+    private final UserRepository userRepository;            // ← add final
+    private final GroupRepository groupRepository;
 
     @Transactional
     public ExpenseResponse createExpense(@Valid ExpenseRequest request) {
@@ -53,6 +51,7 @@ public class ExpenseService {
         expenseShareRepository.saveAll(shares);
         return ExpenseTransformer.expenseToExpenseResponse(saved,shares);
     }
+    @Transactional(readOnly = true)
     public List<ExpenseResponse> getExpensesByGroup(Long groupId) {
         List<Expense> expenses = expenseRepository.findByGroupId(groupId);
         return expenses.stream().map(expense -> {
@@ -60,6 +59,8 @@ public class ExpenseService {
             return ExpenseTransformer.expenseToExpenseResponse(expense, shares);
         }).collect(Collectors.toList());
     }
+
+    @Transactional(readOnly = true)
     public List<DebtResponse> calculateDebts(Long groupId) {
         List<ExpenseShare> allShares = expenseShareRepository.findByExpenseGroupId(groupId);
         List<Expense> allExpenses = expenseRepository.findByGroupId(groupId);
