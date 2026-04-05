@@ -35,8 +35,6 @@ public class UserService {
           }
         User user= UserTransformer.UserRequestToUser(request);
 
-        user.setName(request.getName());
-        user.setEmail(request.getEmail());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
         User savedUser=userRepository.save(user);
         UserResponse userResponse=UserTransformer.userToUserResponse(savedUser);

@@ -9,13 +9,13 @@ public class UserTransformer {
       User user=User.builder()
               .name(userRequest.getName())
               .email(userRequest.getEmail())
-              .password(userRequest.getPassword())
               .build();
       return  user;
     }
 
     public static UserResponse userToUserResponse(User savedUser) {
         return UserResponse.builder()
+                .id(savedUser.getId())
                 .name(savedUser.getName())
                 .email(savedUser.getEmail())
                 .joinedAt(savedUser.getJoinedAt())

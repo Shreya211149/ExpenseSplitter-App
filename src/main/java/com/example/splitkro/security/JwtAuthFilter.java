@@ -24,18 +24,20 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
-                                    FilterChain filterChain) throws ServletException, IOException {
+                                    FilterChain filterChain)
+            throws ServletException, IOException {
 
         String authHeader = request.getHeader("Authorization");
+        // ← add this null check — was crashing without it
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
 
         String token = authHeader.substring(7);
         if (!jwtUtil.isTokenValid(token)) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            return;
-        }
-
-        if (!jwtUtil.isTokenValid(token)) {
-            filterChain.doFilter(request, response);
             return;
         }
 
