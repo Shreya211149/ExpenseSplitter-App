@@ -24,12 +24,12 @@ It provides a **secure Spring Boot REST API** backed by MySQL and a **modern fro
 ## 🛠️ Tech Stack
 
 ### Backend
-- **Language:** Java 17  
-- **Framework:** Spring Boot 3.2  
-- **Security:** Spring Security + JWT  
-- **ORM:** Spring Data JPA (Hibernate)  
-- **Validation:** Jakarta Bean Validation  
-- **API Documentation:** SpringDoc OpenAPI (Swagger UI)  
+- **Language:** Java 21
+- **Framework:** Spring Boot 4.0.4
+- **Security:** Spring Security + JWT (JJWT 0.11.5)
+- **ORM:** Spring Data JPA (Hibernate)
+- **Validation:** Jakarta Bean Validation
+- **API Documentation:** SpringDoc OpenAPI (Swagger UI 2.6.0)
 - **Build Tool:** Maven  
 
 ### Database
@@ -48,21 +48,7 @@ It provides a **secure Spring Boot REST API** backed by MySQL and a **modern fro
 ---
 
 ## 📂 Project Structure
-src/main/java/com/example/splitkro
-│
-├── config → Swagger & application configs
-├── controller → REST controllers
-├── dto
-│ ├── request → API request DTOs
-│ └── response → API response DTOs
-├── enum → Enums (SplitType)
-├── exception → Custom exceptions & handlers
-├── model → JPA entities
-├── repository → Spring Data JPA repositories
-├── security → JWT & Spring Security config
-├── service → Business logic
-├── transformer → Entity ↔ DTO mapping
-└── SplitkroApplication.java
+<img width="1160" height="727" alt="Screenshot 2026-04-06 project structure" src="https://github.com/user-attachments/assets/e26b22d9-448d-4f24-b455-0b168dbac057" />
 
 ---
 
