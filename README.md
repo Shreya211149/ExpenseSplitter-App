@@ -48,6 +48,7 @@ It provides a **secure Spring Boot REST API** backed by MySQL and a **modern fro
 ---
 
 ## 📂 Project Structure
+
 <img width="1160" height="727" alt="Screenshot 2026-04-06 project structure" src="https://github.com/user-attachments/assets/e26b22d9-448d-4f24-b455-0b168dbac057" />
 
 ---
