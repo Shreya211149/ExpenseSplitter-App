@@ -123,9 +123,10 @@ Test and explore the APIs using Swagger UI:
 
 Shreya Midya
 Email: shreyamidya2003@.com
-⭐ Support
 
-## If you like this project:
+
+## ⭐ Support
+If you like this project:
 
 ⭐ Star the repository
 🍴 Fork it
