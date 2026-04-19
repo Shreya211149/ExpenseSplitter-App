@@ -28,44 +28,55 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             FilterChain filterChain
     ) throws ServletException, IOException {
 
+        System.out.println("\n================ JWT FILTER START ================");
+        System.out.println("REQUEST URI: " + request.getRequestURI());
+
         String authHeader = request.getHeader("Authorization");
 
-        // 1. No token → continue normally
+        System.out.println("AUTH HEADER: " + authHeader);
+
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            System.out.println(" NO TOKEN FOUND - continuing filter chain");
             filterChain.doFilter(request, response);
             return;
         }
 
         String token = authHeader.substring(7);
+        System.out.println("TOKEN RECEIVED: " + token);
 
-        // 2. Invalid token → DO NOT block here (let Spring handle 403)
-        if (!jwtUtil.isTokenValid(token)) {
+        boolean valid = jwtUtil.isTokenValid(token);
+        System.out.println("TOKEN VALID: " + valid);
+
+        if (!valid) {
+            System.out.println(" INVALID TOKEN - continuing without auth");
             filterChain.doFilter(request, response);
             return;
         }
 
         String email = jwtUtil.extractEmail(token);
+        System.out.println("EXTRACTED EMAIL: " + email);
 
-        // 3. Set authentication only once
         if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 
             UserDetails userDetails = userDetailsService.loadUserByUsername(email);
 
-            UsernamePasswordAuthenticationToken authToken =
+            System.out.println("USER FOUND: " + userDetails.getUsername());
+
+            UsernamePasswordAuthenticationToken auth =
                     new UsernamePasswordAuthenticationToken(
                             userDetails,
                             null,
                             userDetails.getAuthorities()
                     );
 
-            authToken.setDetails(
-                    new WebAuthenticationDetailsSource().buildDetails(request)
-            );
+            SecurityContextHolder.getContext().setAuthentication(auth);
 
-            SecurityContextHolder.getContext().setAuthentication(authToken);
+            System.out.println("AUTHENTICATION SET SUCCESS");
         }
 
         filterChain.doFilter(request, response);
+
+        System.out.println("================ JWT FILTER END ================\n");
     }
 
     @Override
