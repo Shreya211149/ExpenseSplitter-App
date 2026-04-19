@@ -33,16 +33,16 @@ It provides a **secure Spring Boot REST API** backed by MySQL and a **modern fro
 - **Build Tool:** Maven  
 
 ### Database
-- **MySQL 8**
+- **MySQL (Aiven Cloud)**
 
 ### Frontend
 - **HTML, CSS, JavaScript**
 - Responsive UI
 - Hosted on Netlify
 
-### Deployment
-- **Backend:** Railway
-- **Database:** Railway Managed MySQL
+### Deployment(Updated)
+- **Backend:** Render
+- **Database:** Aiven Managed MySQL
 - **Frontend:** Netlify
 
 ---
@@ -98,7 +98,7 @@ It provides a **secure Spring Boot REST API** backed by MySQL and a **modern fro
 Test and explore the APIs using Swagger UI:
 
 - **Swagger UI:**  
-  https://expensesplitter-app-production.up.railway.app/swagger-ui/index.html
+  https://splitkro-app.onrender.com/swagger-ui.html
 
 ---
 
@@ -107,8 +107,8 @@ Test and explore the APIs using Swagger UI:
 - **Frontend (Netlify):**  
   https://splitkro-ui.netlify.app/
 
-- **Backend (Railway):**  
-  https://expensesplitter-app-production.up.railway.app/
+- **Backend (Render):**  
+  https://splitkro-app.onrender.com/
 
 ---
 
