@@ -98,7 +98,7 @@ It provides a **secure Spring Boot REST API** backed by MySQL and a **modern fro
 Test and explore the APIs using Swagger UI:
 
 - **Swagger UI:**  
-  https://splitkro-app.onrender.com/swagger-ui.html
+  https://splitkro-app.onrender.com/swagger-ui/index.html
 
 ---
 
