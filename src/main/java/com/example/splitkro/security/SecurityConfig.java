@@ -23,66 +23,60 @@ import java.util.List;
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
+
     private final JwtAuthFilter jwtAuthFilter;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+
         http
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(csrf -> csrf.disable())
-                .sessionManagement(session -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+
+                .sessionManagement(session ->
+                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                )
+
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+
+                        // Public endpoints
                         .requestMatchers(
                                 "/api/users/register",
                                 "/api/users/login",
-                                "/swagger-ui.html",
                                 "/swagger-ui/**",
                                 "/api-docs/**"
                         ).permitAll()
-                        .requestMatchers(HttpMethod.GET,
-                                "/api/users",
-                                "/api/users/**",
-                                "/api/groups",
-                                "/api/groups/**",
-                                "/api/expenses",
-                                "/api/expenses/**",
-                                "/api/debts",
-                                "/api/debts/**"
-                        ).permitAll()
-                        .anyRequest().authenticated())
+
+                        // EVERYTHING else requires JWT
+                        .requestMatchers("/api/**").authenticated()
+
+                        .anyRequest().authenticated()
+                )
+
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
 
-
-
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
+
         CorsConfiguration config = new CorsConfiguration();
 
         config.setAllowedOrigins(List.of(
-                "https://spontaneous-malasada-d7c830.netlify.app",
                 "https://splitkro-ui.netlify.app",
+                "https://spontaneous-malasada-d7c830.netlify.app",
                 "http://127.0.0.1:5500",
                 "http://localhost:5500"
         ));
 
-        config.setAllowedMethods(List.of(
-                "GET", "POST", "PUT", "DELETE", "OPTIONS"
-        ));
+        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
 
-        config.setAllowedHeaders(List.of(
-                "Authorization",
-                "Content-Type"
-        ));
+        config.setAllowedHeaders(List.of("Authorization", "Content-Type"));
 
         config.setAllowCredentials(true);
 
-        UrlBasedCorsConfigurationSource source =
-                new UrlBasedCorsConfigurationSource();
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
 
         return source;
@@ -94,8 +88,9 @@ public class SecurityConfig {
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration config)
-            throws Exception {
+    public AuthenticationManager authenticationManager(
+            AuthenticationConfiguration config
+    ) throws Exception {
         return config.getAuthenticationManager();
     }
 }

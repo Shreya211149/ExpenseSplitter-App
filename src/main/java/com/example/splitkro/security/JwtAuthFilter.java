@@ -22,59 +22,58 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     private final UserDetailsServiceImpl userDetailsService;
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request,
-                                    HttpServletResponse response,
-                                    FilterChain filterChain)
-            throws ServletException, IOException {
+    protected void doFilterInternal(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            FilterChain filterChain
+    ) throws ServletException, IOException {
 
         String authHeader = request.getHeader("Authorization");
-        // ← add this null check — was crashing without it
+
+        // 1. No token → continue normally
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
             return;
         }
 
-
         String token = authHeader.substring(7);
+
+        // 2. Invalid token → DO NOT block here (let Spring handle 403)
         if (!jwtUtil.isTokenValid(token)) {
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            filterChain.doFilter(request, response);
             return;
         }
 
         String email = jwtUtil.extractEmail(token);
 
+        // 3. Set authentication only once
         if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+
             UserDetails userDetails = userDetailsService.loadUserByUsername(email);
+
             UsernamePasswordAuthenticationToken authToken =
-                    new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-            authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                    new UsernamePasswordAuthenticationToken(
+                            userDetails,
+                            null,
+                            userDetails.getAuthorities()
+                    );
+
+            authToken.setDetails(
+                    new WebAuthenticationDetailsSource().buildDetails(request)
+            );
+
             SecurityContextHolder.getContext().setAuthentication(authToken);
         }
 
         filterChain.doFilter(request, response);
     }
+
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
         String path = request.getServletPath();
-        String method = request.getMethod();
-
-        // skip filter for public paths
-        if (path.equals("/api/users/login")
+        return path.equals("/api/users/login")
                 || path.equals("/api/users/register")
                 || path.startsWith("/swagger")
-                || path.startsWith("/api-docs")) {
-            return true;
-        }
-
-        // skip filter for all GET requests to public endpoints
-        if (method.equals("GET") && (
-                path.startsWith("/api/users") ||
-                        path.startsWith("/api/groups") ||
-                        path.startsWith("/api/expenses") ||
-                        path.startsWith("/api/debts"))) {
-            return true;
-        }
-
-        return false;
+                || path.startsWith("/api-docs");
     }
 }
